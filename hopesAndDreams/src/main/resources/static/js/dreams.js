@@ -1,13 +1,11 @@
-
 //Cookie
 const cookieArr = document.cookie.split("=")
 const userId = cookieArr[1];
 
-
 // dream elements
 
 const submitDream = document.getElementById("dream-form");
-const dreamContainer = document.getElementById("dreams-container");
+let dreamContainer = document.getElementById("dreams-container");
 let dreamBody = document.getElementById("dream-body");
 let updateDream = document.getElementById("update-dream-button");
 
@@ -16,7 +14,7 @@ const seeHopes = document.getElementById("get-hopes")
 
 // hope elements
 const submitHope = document.getElementById("hope-form");
-const hopeContainer = document.getElementById("hopes-container");
+let hopeContainer = document.getElementById("hopes-container");
 let hopeBody = document.getElementById("hope-body");
 let updateHope = document.getElementById("update-hope-button");
 
@@ -33,8 +31,6 @@ const hopeBaseUrl = "http://localhost:8080/api/v1/hopes"
 
 
 // dream functions
-
-
 
 //submit
 
@@ -60,17 +56,17 @@ async function addDream(obj) {
     })
     .catch(err => console.error(err.message))
 
-    if (response.status == 200) {
-        return getDreams(userId);
-    } else {
-        console.error("Failed to add dream")
-    }
+//    if (response.status == 200) {
+//        return getDreams(userId);
+//    } else {
+//        console.error("Failed to add dream")
+//    }
 }
 
 //get dreams
 
 async function getDreams(userId) {
-    console.log("User ID:", userId);
+
 
     await fetch(`${baseUrl}/user/${userId}`, {
         method: "GET",
@@ -84,7 +80,7 @@ async function getDreams(userId) {
 // get dream by id
 //COME BACK TO THIS FETCH BASEURL
 async function getDreamById(dreamId) {
-    await fetch(baseUrl + dreamId, {
+    await fetch(`${baseUrl}/${dreamId}`, {
         method:"GET",
         headers:headers
     })
@@ -101,7 +97,7 @@ async function editDream(dreamId) {
         id: dreamId,
         body: dreamBody.value
     }
-     await fetch(baseUrl, {
+     await fetch(`${baseUrl}`, {
         method: "PUT",
         body: JSON.stringify(bodyObjDream),
         headers: headers
@@ -114,7 +110,7 @@ async function editDream(dreamId) {
 // delete
 
 async function deleteDream(dreamId) {
-    await fetch(baseUrl + dreamId, {
+    await fetch(`${baseUrl}/${dreamId}`, {
     method: "DELETE",
     headers: headers
     })
@@ -123,30 +119,31 @@ async function deleteDream(dreamId) {
 }
 
 //create dream post
-function createDreamPost(arr) {
+const createDreamPost = (arr) => {
 
 dreamContainer.innerHTML = ""
-console.log("Dream Posts:", arr);
+
+
 arr.forEach(obj => {
+
+    console.log(obj);
     let dreamPost = document.createElement("div")
     dreamPost.innerHTML = `
-        <div class="modal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Dream</h5>
-              </div>
-              <div class="modal-body">
-                <p class="card-text">${obj.body}</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="deleteDream(${obj.id})" data-bs-dismiss="modal">Delete</button>
-                <button type="button" class="btn btn-primary" onclick="getDreamById(${obj.id})">Edit</button>
-              </div>
-            </div>
-          </div>
-        </div>
+          <div class="card d-flex" style="width: 18rem; height: 18rem;">
+                            <div class="card-body d-flex flex-column  justify-content-between" style="height: available">
+                                <h4>Dreams</h4>
+                                <p class="card-text">${obj.body}</p>
+                                <div class="d-flex justify-content-between">
+                                    <button class="btn btn-danger" onclick="deleteDream(${obj.id})">Delete</button>
+                                </div>
+                            </div>
+                        </div>
     `
+
+
+
+
+
 dreamContainer.append(dreamPost);
 
 })
@@ -187,9 +184,9 @@ async function addHope(obj) {
         headers: headers
     })
     .catch(err => console.error(err.message))
-    if (response.status == 200) {
-        return getHopes(userId);
-    }
+//    if (response.status == 200) {
+//        return getHopes(userId);
+//    }
 }
 
 //get hopes
@@ -207,7 +204,7 @@ async function getHopes(userId) {
 // get hope by id
 //COME BACK TO THIS FETCH BASEURL
 async function getHopeById(hopeId) {
-    await fetch(hopeBaseUrl + hopeId, {
+    await fetch(`${hopeBaseUrl}/${hopeId}`, {
         method:"GET",
         headers:headers
     })
@@ -224,7 +221,7 @@ async function editHope(hopeId) {
         id: hopeId,
         body: hopeBody.value
     }
-     await fetch(hopeBaseUrl, {
+     await fetch(`${hopeBaseUrl}`, {
         method: "PUT",
         body: JSON.stringify(bodyObj),
         headers: headers
@@ -237,7 +234,7 @@ async function editHope(hopeId) {
 // delete
 
 async function deleteHope(hopeId) {
-    await fetch(hopeBaseUrl + hopeId, {
+    await fetch(`${hopeBaseUrl}/${hopeId}`, {
     method: "DELETE",
     headers: headers
     })
@@ -246,29 +243,22 @@ async function deleteHope(hopeId) {
 }
 
 //create hope post
-function createHopePost(arr) {
+const createHopePost = (arr) => {
 
 hopeContainer.innerHTML = ""
-console.log("Hope Posts:", arr);
+
 arr.forEach(obj => {
     let hopePost = document.createElement("div")
     hopePost.innerHTML = `
-        <div class="modal" tabindex="-1">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title">Hope</h5>
-              </div>
-              <div class="modal-body">
-                <p class="card-text">${obj.body}</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="deleteHope(${obj.id})" data-bs-dismiss="modal">Delete</button>
-                <button type="button" class="btn btn-primary" onclick="getHopeById(${obj.id})">Edit</button>
-              </div>
-            </div>
-          </div>
-        </div>
+         <div class="card d-flex" style="width: 18rem; height: 18rem;">
+                                    <div class="card-body d-flex flex-column  justify-content-between" style="height: available">
+                                        <h4>Hopes</h4>
+                                        <p class="card-text">${obj.body}</p>
+                                        <div class="d-flex justify-content-between">
+                                            <button class="btn btn-danger" onclick="deleteHope(${obj.id})">Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
     `
 hopeContainer.append(hopePost);
 
